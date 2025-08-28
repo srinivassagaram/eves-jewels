@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - EveS Jewels</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background:#fff8f0; color:#333; margin:0; padding-top:90px; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: linear-gradient(90deg, #f9d976, #f39f86); position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .brand { font-family: 'Great Vibes', cursive; font-size: 32px; cursor: pointer; color: #fff; }
+        .icons { display: flex; align-items: center; gap: 25px; font-size: 24px; cursor: pointer; color: #fff; position: relative; }
+        .cart-count { position: absolute; top: -8px; right: -10px; background: red; color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
+        .menu-btn { font-size: 28px; cursor: pointer; color: #fff; }
+        .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background-color: #c49b63; color: #fff; display: flex; flex-direction: column; padding-top: 100px; transition: 0.3s; z-index: 999; }
+        .sidebar a { padding: 15px 30px; font-size: 20px; color: #fff; transition: 0.3s; }
+        .sidebar a:hover { background-color: #f9d976; color: #000; }
+        .sidebar.active { left: 0; }
+        h1 { font-family: 'Great Vibes', cursive; color:#f39f86; font-size:36px; margin-bottom:20px; }
+        .profile-info { background:#fceabb; padding:20px; border-radius:10px; max-width:500px; margin-bottom:30px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+        .profile-info p { font-size:18px; margin:8px 0; }
+        button { padding:10px 20px; background:#f39f86; color:#fff; border:none; border-radius:5px; cursor:pointer; margin:10px 5px; }
+        button:hover { background:#f9d976; color:#000; }
+        .orders { margin-top:20px; max-width:600px; }
+        .order-item { background:#fff7f0; padding:15px; margin:10px 0; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+    <a href="index.html" onclick="sidebar.classList.remove('active')">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="index.html#contact">Contact</a>
+</div>
+
+<header>
+    <span class="menu-btn" id="menuBtn">&#9776;</span>
+    <div class="brand" id="brand">EveS Jewels</div>
+    <div class="icons">
+        <span id="account">&#128100;</span>
+        <span id="cart">&#128722;<span class="cart-count" id="cartCount">0</span></span>
+    </div>
+</header>
+
+<div style="padding:20px;">
+    <h1>My Profile</h1>
+
+    <div class="profile-info" id="profileInfo">
+        <p><strong>Name:</strong> <span id="profileName" contenteditable="false"></span></p>
+        <p><strong>Phone:</strong> <span id="profilePhone" contenteditable="false"></span></p>
+        <p><strong>Address:</strong> <span id="profileAddress" contenteditable="false"></span></p>
+        <p><strong>Email:</strong> <span id="profileEmail" contenteditable="false"></span></p>
+        <button id="editProfileBtn">Edit Profile</button>
+        <button id="saveProfileBtn" style="display:none;">Save Profile</button>
+        <button id="myOrdersBtn">My Orders</button>
+        <button id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="orders" id="ordersList" style="display:none;"></div>
+</div>
+
+<script>
+    // Sidebar toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    menuBtn.addEventListener('click', () => { sidebar.classList.toggle('active'); });
+
+    // Brand click → Home
+    document.getElementById('brand').addEventListener('click', () => { window.location.href = 'index.html'; });
+
+    // Profile icon → stay on profile
+    document.getElementById('account').addEventListener('click', () => { window.location.href = 'profile.html'; });
+
+    // Cart icon → cart page
+    const cartCount = document.getElementById('cartCount');
+    document.getElementById('cart').addEventListener('click', () => { window.location.href = 'cart.html'; });
+
+    // Load cart count
+    function updateCartCount(){
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cartCount.textContent = cart.length;
+    }
+
+    // Check login and get user data
+    let user = JSON.parse(localStorage.getItem('userProfile'));
+    if(!user) {
+        alert('You are not logged in. Redirecting to login page.');
+        window.location.href = 'login.html';
+    }
+
+    // Display profile info
+    function displayProfile() {
+        if(user){
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profilePhone').textContent = user.phone;
+            document.getElementById('profileAddress').textContent = user.address;
+            document.getElementById('profileEmail').textContent = user.email;
+        }
+    }
+    displayProfile();
+
+    // Edit profile
+    const editBtn = document.getElementById('editProfileBtn');
+    const saveBtn = document.getElementById('saveProfileBtn');
+
+    editBtn.addEventListener('click', () => {
+        document.getElementById('profileName').contentEditable = true;
+        document.getElementById('profilePhone').contentEditable = true;
+        document.getElementById('profileAddress').contentEditable = true;
+        document.getElementById('profileEmail').contentEditable = true;
+        editBtn.style.display = 'none';
+        saveBtn.style.display = 'inline-block';
+    });
+
+    // Save edited profile
+    saveBtn.addEventListener('click', () => {
+        // Update the user object with new data from the editable fields
+        user.name = document.getElementById('profileName').textContent.trim();
+        user.phone = document.getElementById('profilePhone').textContent.trim();
+        user.address = document.getElementById('profileAddress').textContent.trim();
+        user.email = document.getElementById('profileEmail').textContent.trim();
+        
+        // Save the updated user object back to localStorage
+        localStorage.setItem('userProfile', JSON.stringify(user));
+
+        alert('Profile updated!');
+
+        // Disable editing and hide the save button
+        document.getElementById('profileName').contentEditable = false;
+        document.getElementById('profilePhone').contentEditable = false;
+        document.getElementById('profileAddress').contentEditable = false;
+        document.getElementById('profileEmail').contentEditable = false;
+        saveBtn.style.display = 'none';
+        editBtn.style.display = 'inline-block';
+    });
+
+    // Orders persistent
+    let orders = JSON.parse(localStorage.getItem('orders')) || [];
+    document.getElementById('myOrdersBtn').addEventListener('click', () => {
+        const ordersDiv = document.getElementById('ordersList');
+        ordersDiv.innerHTML = '<h2 style="font-family:\'Great Vibes\', cursive; color:#f39f86;">My Orders</h2>';
+        ordersDiv.style.display = 'block';
+        if(orders.length === 0){
+            ordersDiv.innerHTML += "<p>No orders yet.</p>";
+        } else {
+            orders.forEach(order => {
+                const div = document.createElement('div');
+                div.className = 'order-item';
+                div.textContent = `Product: ${order.product} | Date: ${order.date}`;
+                ordersDiv.appendChild(div);
+            });
+        }
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('userProfile');
+        window.location.href = 'index.html';
+    });
+
+    // Initialize cart count
+    updateCartCount();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EveS Jewels</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Reset */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Roboto', sans-serif; background: #fff8f0; color: #333; }
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: linear-gradient(90deg, #f9d976, #f39f86);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.brand { font-family: 'Great Vibes', cursive; font-size: 32px; cursor: pointer; color: #fff; }
+.icons { display: flex; align-items: center; gap: 25px; font-size: 24px; cursor: pointer; color: #fff; position: relative; }
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    background-color: #c49b63;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding-top: 100px;
+    transition: 0.3s;
+    z-index: 999;
+}
+.sidebar a {
+    padding: 15px 30px;
+    font-size: 20px;
+    color: #fff;
+    transition: 0.3s;
+}
+.sidebar a:hover { background-color: #f9d976; color: #000; }
+.sidebar.active { left: 0; }
+.menu-btn { font-size: 28px; cursor: pointer; color: #fff; }
+
+/* Banner */
+.banner {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+    color: #fff;
+    font-family: 'Great Vibes', cursive;
+    font-size: 48px;
+    text-align: center;
+    margin-top: 70px;
+    letter-spacing: 2px;
+    transition: opacity 0.5s;
+}
+
+/* Filter Button Dropdown */
+.filter-container {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 50px 0 50px;
+}
+.filter-btn {
+    padding: 10px 20px;
+    background-color: #f39f86;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+.filter-btn:hover { background-color: #f9d976; color: #000; }
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: #fff7f0;
+    border: 1px solid #f39f86;
+    border-radius: 5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 10;
+    min-width: 150px;
+}
+.dropdown a {
+    display: block;
+    padding: 10px 15px;
+    color: #f39f86;
+    cursor: pointer;
+}
+.dropdown a:hover { background-color: #f39f86; color: #fff; }
+
+/* Products */
+.products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px 50px 50px 50px;
+}
+@media(max-width: 900px){ .products { grid-template-columns: repeat(2, 1fr); } }
+@media(max-width: 600px){ .products { grid-template-columns: 1fr; } }
+
+.product-card {
+    background-color: #fff7f0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+.product-card:hover { transform: scale(1.05); }
+.product-card img { width: 100%; height: 200px; object-fit: cover; }
+.product-card .product-info { padding: 15px; text-align: center; }
+.product-card .product-info h3 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: #f39f86;
+}
+.product-card .product-info .price {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+}
+.product-card .product-info p {
+    font-size: 16px;
+    color: #555;
+}
+.product-card button {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background:#f39f86;
+    border:none;
+    border-radius:5px;
+    color:#fff;
+    cursor:pointer;
+}
+.product-card button:hover { background:#f9d976; color:#000; }
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    background: linear-gradient(135deg, #fff8e7, #f8e2b8, #e6c77d); 
+    border-top: 2px solid #d4af37;
+}
+
+.footer-container h3 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2rem;
+    color: #8b6b2e;
+}
+
+.footer-container p, 
+.footer-container a {
+    color: #4a3b1a;
+    text-decoration: none;
+}
+
+.footer-bottom {
+    text-align: center;
+    background: linear-gradient(135deg, #f8e2b8, #e6c77d, #d4af37);
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #3d2f12;
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar Menu -->
+<div class="sidebar" id="sidebar">
+    <a onclick="filterCategory('Chains')">Chains</a>
+    <a onclick="filterCategory('Earrings')">Earrings</a>
+    <a onclick="filterCategory('Rings')">Rings</a>
+    <a onclick="filterCategory('Silver')">Silver</a>
+    <a onclick="scrollToContact()">Contact</a>
+</div>
+
+<!-- Header -->
+<header>
+    <span class="menu-btn" id="menuBtn">&#9776;</span>
+    <div class="brand" id="brand">EveS Jewels</div>
+    <div class="icons">
+        <span id="account">&#128100;</span>
+        <span id="cart">&#128722;<span class="cart-count" id="cartCount">0</span></span>
+    </div>
+</header>
+
+<!-- Banner -->
+<section class="banner" id="banner">
+    Newly Launched! Explore Our Exclusive Collection
+</section>
+
+<!-- Filter Button -->
+<div class="filter-container">
+    <button class="filter-btn" id="filterBtn">Filter</button>
+    <div class="dropdown" id="dropdown">
+        <a onclick="filterCategory('Chains')">Chains</a>
+        <a onclick="filterCategory('Earrings')">Earrings</a>
+        <a onclick="filterCategory('Rings')">Rings</a>
+        <a onclick="filterCategory('Silver')">Silver</a>
+    </div>
+</div>
+
+<!-- Products Section -->
+<section class="products" id="products"></section>
+
+<!-- Footer -->
+<div class="footer-container" id="contact">
+    <div>
+        <h3>About Us</h3>
+        <p>EveS Jewels is crafted for every queen who deserves to shine. Our collection features genuine, high-quality pieces sourced from the latest trends in the fashion industry. From elegant earrings to exquisite chains and dazzling silver creations, each piece is designed to celebrate your unique beauty and style.</p>
+        <p><strong>Every Piece a Promise</strong></p>
+    </div>
+    <div>
+        <h3>Contact</h3>
+        <p>We would love to hear from you! Whether you have questions about our collection or need assistance, our team is here to help. Connect with us at:</p>
+        <p><strong>Phone Numbers:</strong><br><a href="tel:7989765482">7989765482</a><br><a href="tel:9398047814">9398047814</a></p>
+        <p><strong>Email:</strong><br><a href="mailto:evesjewels@gmail.com">evesjewels@gmail.com</a></p>
+    </div>
+</div>
+
+<div class="footer-bottom">
+    <p>© 2025 EveS Jewels. All Rights Reserved.</p>
+</div>
+
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const banner = document.getElementById('banner');
+const productsContainer = document.getElementById('products');
+const filterBtn = document.getElementById('filterBtn');
+const dropdown = document.getElementById('dropdown');
+const brand = document.getElementById('brand');
+const cartCount = document.getElementById('cartCount');
+
+// Sidebar toggle
+menuBtn.addEventListener('click', () => { sidebar.classList.toggle('active'); });
+
+// Filter dropdown toggle
+filterBtn.addEventListener('click', () => { dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block'; });
+
+// Click outside close
+window.addEventListener('click', function(e) {
+    if (!filterBtn.contains(e.target) && !dropdown.contains(e.target)) dropdown.style.display = 'none';
+    if (!sidebar.contains(e.target) && !menuBtn.contains(e.target) && sidebar.classList.contains('active')) sidebar.classList.remove('active');
+});
+
+// Brand click → show all
+brand.addEventListener('click', () => { sidebar.classList.remove('active'); showAll(); });
+
+// Account redirect (updated)
+document.getElementById('account').addEventListener('click', () => {
+    const user = JSON.parse(localStorage.getItem('userProfile'));
+    if(user && user.email) {
+        window.location.href = 'profile.html';
+    } else {
+        window.location.href = 'login.html';
+    }
+});
+
+// Cart redirect
+document.getElementById('cart').addEventListener('click', () => {
+    window.location.href = 'cart.html';
+});
+
+// Products
+const products = [
+    { name: "Butterfly Silver Chain", description: "Butterfly Silver Chain", category:"Silver", img: "img/butterfly.jpeg", Price: 2499 },
+    { name: "Heart Piece Chain", description: "Heart Piece Chain", category:"Chains", img: "img/chain1.jpeg", Price: 290 },
+    { name: "Heart Chain", description: "Heart Chain", category:"Chains", img: "img/chain2.jpeg", Price: 356 },
+    { name: "Heart Ring", description: "Heart Ring", category:"Rings", img: "img/heart_ring.jpeg", Price: 490 },
+    { name: "Thin Ring", description: "Thin Ring", category:"Rings", img: "img/line_ring.jpeg", Price: 269 },
+    { name: "Magnetic Chain", description: "Magnetic Chain", category:"Chains", img: "img/magnetic_chain.jpeg", Price: 343 },
+    { name: "Perl Earring", description: "Perl Earring", category:"Earrings", img: "img/perl_earring.jpeg", Price: 199 },
+    { name: "Korean Earrings", description: "Korean Earring", category:"Earrings", img: "img/ball_earring.jpeg", Price: 280 },
+    { name: "Black Earring", description: "Black Earring", category:"Earrings", img: "img/black_earring.jpeg", Price: 499 },
+    { name: "Bow Earring", description: "Bow Earring", category:"Earrings", img: "img/bow_earring.jpeg", Price: 250 }
+];
+
+// Display products
+function displayProducts(list){
+    productsContainer.innerHTML = '';
+    list.forEach(product => {
+        const card = document.createElement('div');
+        card.classList.add('product-card');
+        card.innerHTML = `
+            <img src="${product.img}" alt="${product.name}">
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <div class="price">₹${product.Price}</div>
+                <p>${product.description}</p>
+                <button onclick="addToCart('${product.name}', ${product.Price}, '${product.img}')">Add to Cart</button>
+            </div>
+        `;
+        productsContainer.appendChild(card);
+    });
+}
+
+// Filter
+function filterCategory(category){
+    banner.style.display = 'none';
+    dropdown.style.display = 'none';
+    const filtered = products.filter(p => p.category === category);
+    displayProducts(filtered);
+}
+
+function showAll(){
+    banner.style.display = 'flex';
+    displayProducts(products);
+}
+
+function scrollToContact(){ window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }
+
+// ✅ Cart system: store full product details
+function addToCart(name, price, image){
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push({
+        product: name,
+        price: price,
+        image: image.replace('img/', ''), 
+        date: new Date().toISOString().split('T')[0]
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+    alert(name + " added to cart!");
+}
+
+// Update cart icon count
+function updateCartCount(){
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartCount.textContent = cart.length;
+}
+
+// Initial display
+displayProducts(products);
+updateCartCount();
+</script>
+
+</body>
+</html>
